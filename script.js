@@ -12,7 +12,7 @@ let obstacleInterval;
 let collectibleInterval;
 let gameSpeed = 3;
 let isJumping = false;
-let jumpHeight = 150;
+let jumpHeight = 300;
 let jumpSpeed = 5;
 
 const beginBtn = document.getElementById("begin-btn");
@@ -55,11 +55,30 @@ function startGame() {
 
 // Player movement
 document.addEventListener("keydown", (e) => {
-    if (e.code === "ArrowUp" && !isJumping) {
-        jump();
+    const playerLeft = parseInt(player.style.left);
+    const playerBottom = parseInt(player.style.bottom);
+    const playerWidth = player.offsetWidth;
+    const playerHeight = player.offsetHeight;
+    const areaWidth = gameArea.clientWidth;
+    const areaHeight = gameArea.clientHeight;
+
+    switch(e.code) {
+        case "ArrowUp":
+            if (!isJumping) jump();
+            break;
+        case "ArrowLeft":
+            if (playerLeft > 0) player.style.left = (playerLeft - 10) + "px";
+            break;
+        case "ArrowRight":
+            if (playerLeft + playerWidth < areaWidth) player.style.left = (playerLeft + 10) + "px";
+            break;
+        case "ArrowDown":
+            if (playerBottom > 0) player.style.bottom = Math.max(playerBottom - 10, 0) + "px";
+            break;
     }
 });
 
+// Jump mechanics
 function jump() {
     isJumping = true;
     let jumpCount = 0;
@@ -91,7 +110,7 @@ function fall() {
 function spawnObstacle() {
     const obstacle = document.createElement("div");
     obstacle.classList.add("obstacle");
-    obstacle.style.right = "0px"; // start from right
+    obstacle.style.right = "0px";
     obstacle.style.bottom = "0px";
     gameArea.appendChild(obstacle);
     obstacles.push(obstacle);
@@ -101,7 +120,7 @@ function spawnObstacle() {
 function spawnCollectible() {
     const collectible = document.createElement("div");
     collectible.classList.add("collectible");
-    collectible.style.right = "0px"; // start from right
+    collectible.style.right = "0px";
     collectible.style.bottom = Math.floor(Math.random() * (gameArea.clientHeight - 50)) + "px";
     gameArea.appendChild(collectible);
     collectibles.push(collectible);
@@ -109,17 +128,12 @@ function spawnCollectible() {
 
 // Game loop
 function updateGame() {
-    // Move obstacles
     obstacles.forEach((obs, index) => {
         let right = parseInt(obs.style.right);
-        obs.style.right = right + gameSpeed + "px"; // moving left
+        obs.style.right = right + gameSpeed + "px"; // move left
 
-        // Collision detection
-        if (isColliding(player, obs)) {
-            endGame();
-        }
+        if (isColliding(player, obs)) endGame();
 
-        // Remove offscreen
         if (right > gameArea.clientWidth) {
             obs.remove();
             obstacles.splice(index, 1);
@@ -128,12 +142,10 @@ function updateGame() {
         }
     });
 
-    // Move collectibles
     collectibles.forEach((col, index) => {
         let right = parseInt(col.style.right);
-        col.style.right = right + gameSpeed + "px"; // moving left
+        col.style.right = right + gameSpeed + "px";
 
-        // Collect
         if (isColliding(player, col)) {
             score += 10;
             scoreEl.innerText = "Score: " + score;
@@ -141,16 +153,13 @@ function updateGame() {
             collectibles.splice(index, 1);
         }
 
-        // Remove offscreen
         if (right > gameArea.clientWidth) {
             col.remove();
             collectibles.splice(index, 1);
         }
     });
 
-    // Increase speed gradually
     gameSpeed += 0.002;
-
     gameInterval = requestAnimationFrame(updateGame);
 }
 
