@@ -14,6 +14,7 @@ let gameSpeed = 3;
 let isJumping = false;
 let jumpHeight = 150;
 let jumpSpeed = 5;
+
 const beginBtn = document.getElementById("begin-btn");
 const instructionsOverlay = document.getElementById("instructions-overlay");
 
@@ -21,6 +22,7 @@ beginBtn.onclick = () => {
     instructionsOverlay.style.display = "none";
     startGame();
 };
+
 // Start game
 startBtn.onclick = startGame;
 
@@ -89,7 +91,7 @@ function fall() {
 function spawnObstacle() {
     const obstacle = document.createElement("div");
     obstacle.classList.add("obstacle");
-    obstacle.style.right = "0px";
+    obstacle.style.right = "0px"; // start from right
     obstacle.style.bottom = "0px";
     gameArea.appendChild(obstacle);
     obstacles.push(obstacle);
@@ -99,7 +101,7 @@ function spawnObstacle() {
 function spawnCollectible() {
     const collectible = document.createElement("div");
     collectible.classList.add("collectible");
-    collectible.style.right = "0px";
+    collectible.style.right = "0px"; // start from right
     collectible.style.bottom = Math.floor(Math.random() * (gameArea.clientHeight - 50)) + "px";
     gameArea.appendChild(collectible);
     collectibles.push(collectible);
@@ -110,7 +112,7 @@ function updateGame() {
     // Move obstacles
     obstacles.forEach((obs, index) => {
         let right = parseInt(obs.style.right);
-        obs.style.right = right + gameSpeed + "px";
+        obs.style.right = right + gameSpeed + "px"; // moving left
 
         // Collision detection
         if (isColliding(player, obs)) {
@@ -121,7 +123,7 @@ function updateGame() {
         if (right > gameArea.clientWidth) {
             obs.remove();
             obstacles.splice(index, 1);
-            score += 5; // score for passing obstacle
+            score += 5;
             scoreEl.innerText = "Score: " + score;
         }
     });
@@ -129,7 +131,7 @@ function updateGame() {
     // Move collectibles
     collectibles.forEach((col, index) => {
         let right = parseInt(col.style.right);
-        col.style.right = right + gameSpeed + "px";
+        col.style.right = right + gameSpeed + "px"; // moving left
 
         // Collect
         if (isColliding(player, col)) {
@@ -139,6 +141,7 @@ function updateGame() {
             collectibles.splice(index, 1);
         }
 
+        // Remove offscreen
         if (right > gameArea.clientWidth) {
             col.remove();
             collectibles.splice(index, 1);
