@@ -14,7 +14,26 @@ let gameSpeed = 3;
 let isJumping = false;
 let jumpHeight = 150;
 let jumpSpeed = 5;
-
+#instructions-overlay {
+    position: absolute;
+    width: 500px;
+    height: 400px;
+    background: rgba(0,0,0,0.9);
+    color: #fff;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    z-index: 10;
+}
+#instructions-overlay button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
 // Start game
 startBtn.onclick = startGame;
 
